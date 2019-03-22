@@ -16,7 +16,7 @@ public class RSAUtilTest {
 
     @Test
     public void getPrivateKey() {
-        System.out.println(new String(Base64.encode(RSAUtil.getPrivateKey())));
+        System.out.println(new String(Base64.encode(RSAUtil.getPrivateBytes())));
     }
 
 }

@@ -27,7 +27,7 @@ public class RSAUtil {
         return publicBytes;
     }
 
-    public static byte[] getPrivateKey() {
+    public static byte[] getPrivateBytes() {
         if (privateKey == null) {
             privateKey = readPrivateKey();
         }
@@ -46,7 +46,11 @@ public class RSAUtil {
             String str = null;
             String result = null;
             while ((str = bufferedReader.readLine()) != null) {
-                result = result + str;
+                if (result == null) {
+                    result = str;
+                } else {
+                    result = result + str;
+                }
             }
             return result.getBytes();
         } catch (Throwable t) {
@@ -66,7 +70,11 @@ public class RSAUtil {
             String str = null;
             String result = null;
             while ((str = bufferedReader.readLine()) != null) {
-                result = result + str;
+                if (result == null) {
+                    result = str;
+                } else {
+                    result = result + str;
+                }
             }
             return result.getBytes();
         } catch (Throwable t) {
@@ -80,7 +88,6 @@ public class RSAUtil {
 
         try {
             byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
-            System.out.println(publicKeyBytes.length);
             FileWriter fileWriter = new FileWriter("publicKey.key");
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(new String(publicKeyBytes));
@@ -88,7 +95,6 @@ public class RSAUtil {
             bufferedWriter.close();
 
             byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
-            System.out.println(privateKeyBytes.length);
             fileWriter = new FileWriter("privateKey.key");
             bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(new String(privateKeyBytes));
