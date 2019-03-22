@@ -2,12 +2,9 @@ package com.draper.itoken.core.util;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.bouncycastle.util.encoders.Base64;
 
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.security.KeyPair;
 
 
@@ -22,64 +19,82 @@ public class RSAUtil {
     private RSAUtil() {
     }
 
+    // 放在内存中只读，不可写
     public static byte[] getPublicBytes() {
         if (publicBytes == null) {
-
+            publicBytes = readPublicKey();
         }
         return publicBytes;
     }
 
     public static byte[] getPrivateKey() {
         if (privateKey == null) {
-
+            privateKey = readPrivateKey();
         }
         return privateKey;
     }
 
     private static byte[] readPublicKey() {
         try {
-            FileChannel fileChannel = new FileInputStream("publicKey").getChannel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(1200);
-            fileChannel.read(byteBuffer);
-            byteBuffer.flip();
-            int data = -1;
-            while (data != 0) {
-                byteBuffer.get();
+            File file = new File("publicKey.key");
+            // 文件不存在则会生成一对秘钥
+            if (!file.exists()) {
+                generateRSAKeyPair();
             }
-
-
+            FileReader fileReader = new FileReader("publicKey.key");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String str = null;
+            String result = null;
+            while ((str = bufferedReader.readLine()) != null) {
+                result = result + str;
+            }
+            return result.getBytes();
         } catch (Throwable t) {
             t.printStackTrace();
         }
         return null;
     }
 
-
-    // 如果没有可以自行生成
-    public static void main(String[] args) {
-        generateRSAKeyPair();
+    private static byte[] readPrivateKey() {
+        try {
+            File file = new File("privateKey.key");
+            if (!file.exists()) {
+                generateRSAKeyPair();
+            }
+            FileReader fileReader = new FileReader("privateKey.key");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String str = null;
+            String result = null;
+            while ((str = bufferedReader.readLine()) != null) {
+                result = result + str;
+            }
+            return result.getBytes();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return null;
     }
 
     private static void generateRSAKeyPair() {
         KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
 
-        try (FileChannel fileChannel = new FileOutputStream("privateKey.key").getChannel()) {
-            byte[] privateBytes = keyPair.getPrivate().getEncoded();
-            byte[] base64Bytes = Base64.encode(privateBytes);
-            ByteBuffer byteBuffer = ByteBuffer.allocate(base64Bytes.length);
-            byteBuffer.put(base64Bytes);
-            byteBuffer.flip();
-            fileChannel.write(byteBuffer);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-        try (FileChannel fileChannel = new FileOutputStream("publicKey.key").getChannel()) {
-            byte[] publicBytes = keyPair.getPublic().getEncoded();
-            byte[] base64Bytes = Base64.encode(publicBytes);
-            ByteBuffer byteBuffer = ByteBuffer.allocate(base64Bytes.length);
-            byteBuffer.put(base64Bytes);
-            byteBuffer.flip();
-            fileChannel.write(byteBuffer);
+        try {
+            byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
+            System.out.println(publicKeyBytes.length);
+            FileWriter fileWriter = new FileWriter("publicKey.key");
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(new String(publicKeyBytes));
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+            byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
+            System.out.println(privateKeyBytes.length);
+            fileWriter = new FileWriter("privateKey.key");
+            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(new String(privateKeyBytes));
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
         } catch (Throwable t) {
             t.printStackTrace();
         }
