@@ -43,4 +43,9 @@ public class Response<T> {
         this.message = message;
         this.data = data;
     }
+
+    public static Response error() {
+        return new Response(400, "BAD REQUEST", null);
+    }
+
 }
