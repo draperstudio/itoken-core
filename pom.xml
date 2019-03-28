@@ -54,6 +54,13 @@
 
     <build>
         <plugins>
+            <!-- Spring boot maven plugin -->
+            <!-- goals -->
+            <!-- 1. spring-boot:run runs your Spring Boot application -->
+            <!-- 2. spring-boot:repackage repackages your jar/war to be executable -->
+            <!-- 3. spring-boot:start and spring-boot:stop to manage the lifecycle of your Spring Boot application (i.e. for integration tests) -->
+            <!-- 4. spring-boot:build-info generates build information that can be used by the Actuator -->
+            <!-- https://docs.spring.io/spring-boot/docs/2.1.3.RELEASE/maven-plugin/ -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -61,6 +68,11 @@
                     <mainClass>com.draper.itoken.sso.SsoApplication</mainClass>
                 </configuration>
             </plugin>
+
+            <!-- SureFire plugin -->
+            <!-- The Surefire Plugin has only one goal: -->
+            <!-- surefire:test runs the unit tests of an application -->
+            <!-- http://maven.apache.org/surefire/maven-surefire-plugin/ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -70,4 +82,42 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>aliyun-repo</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/68342-release-nXvimq/</url>
+        </repository>
+        <repository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/68342-snapshot-WuGTFR/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <name>rdc nexus releases repo</name>
+            <url>https://repo.rdc.aliyun.com/repository/68342-release-nXvimq/</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <name>rdc nexus snapshots repo</name>
+            <url>https://repo.rdc.aliyun.com/repository/68342-snapshot-WuGTFR/</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 </project>
